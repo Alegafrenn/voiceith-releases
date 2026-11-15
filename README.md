@@ -6,11 +6,12 @@
 
 **Приватный голос и текст для команд — без сторонних SDK и облачных посредников.**
 
-Windows · Linux · Android
+Windows · Linux · macOS · Android
 
 [![Latest release](https://img.shields.io/github/v/release/Alegafrenn/voiceith-releases?label=latest&style=flat-square)](https://github.com/Alegafrenn/voiceith-releases/releases/latest)
 [![Windows](https://img.shields.io/badge/Windows-x64-0078D4?style=flat-square&logo=windows)](https://github.com/Alegafrenn/voiceith-releases/releases/latest)
 [![Linux](https://img.shields.io/badge/Linux-x64-FCC624?style=flat-square&logo=linux&logoColor=black)](https://github.com/Alegafrenn/voiceith-releases/releases/latest)
+[![macOS](https://img.shields.io/badge/macOS-11%2B-000000?style=flat-square&logo=apple)](https://github.com/Alegafrenn/voiceith-releases/releases/latest)
 [![Android](https://img.shields.io/badge/Android-10%2B-3DDC84?style=flat-square&logo=android&logoColor=white)](https://github.com/Alegafrenn/voiceith-releases/releases/latest)
 
 </div>
@@ -46,14 +47,20 @@ Windows · Linux · Android
 | **Windows 10/11 x64** | `Voiceith-Setup-<version>.exe` | Запустить installer. Установка per-user, без администратора. |
 | **Linux x64** | `Voiceith-<version>-x86_64.AppImage` | `chmod +x` и запустить. |
 | **Debian / Ubuntu** | `Voiceith-<version>-amd64.deb` | `sudo apt install ./Voiceith-<version>-amd64.deb` |
+| **macOS 11+ Intel** | `Voiceith-<version>-x64.dmg` | Открыть DMG, перетащить в Applications. |
+| **macOS 11+ Apple Silicon** | `Voiceith-<version>-arm64.dmg` | Открыть DMG, перетащить в Applications. |
 | **Android 10+** | `Voiceith-Android-<version>.apk` | Разрешить установку из неизвестных источников и открыть APK. |
 
 В Release также публикуются:
 
-- `latest.yml` — манифест автообновления desktop;
+- `latest.yml` — манифест автообновления Windows/Linux desktop;
+- `latest-mac.yml` — манифест автообновления macOS;
 - `*.blockmap` — дифференциальное обновление;
 - `.AppImage` и `.deb` для Linux;
+- `.dmg` и `.zip` для macOS;
 - release notes с изменениями версии.
+
+> macOS-сборки сейчас **unsigned**. Gatekeeper будет предупреждать при запуске. Пользователь может открыть приложение через «Правый клик → Открыть» или выполнить `xattr -cr /Applications/Voiceith.app`.
 
 > Android APK может быть подписан debug-ключом до перехода на release keystore. Для публичного распространения будет использоваться отдельная подпись.
 
@@ -104,6 +111,41 @@ sudo apt install ./Voiceith-<version>-amd64.deb
 ```
 
 Данные клиента: `~/.config/Voiceith`.
+
+### macOS (Intel и Apple Silicon)
+
+1. Определите процессор:
+   - меню Apple → **Об этом Mac**;
+   - `M1/M2/M3/M4` — Apple Silicon, скачивайте `arm64`;
+   - `Intel` — скачивайте `x64`.
+2. Скачайте нужный DMG:
+   - `Voiceith-<version>-arm64.dmg`;
+   - `Voiceith-<version>-x64.dmg`.
+3. Откройте DMG и перетащите **Voiceith** в папку `Applications`.
+4. Откройте **Applications**, нажмите правой кнопкой по **Voiceith** → **Открыть** → **Открыть**.
+5. Если macOS блокирует запуск:
+   - **Системные настройки → Конфиденциальность и безопасность**;
+   - внизу нажмите **«Всё равно открыть»** для Voiceith.
+6. Альтернатива через Terminal:
+
+```bash
+xattr -cr /Applications/Voiceith.app
+open /Applications/Voiceith.app
+```
+
+Можно использовать и `.zip`-сборку: распакуйте, перенесите `Voiceith.app` в `Applications` и выполните те же шаги.
+
+> macOS-сборка **unsigned**. Это значит, что Gatekeeper будет предупреждать при первом запуске. Нотаризация Apple появится позже.
+
+Данные клиента: `~/Library/Application Support/Voiceith`.
+
+Удаление:
+
+1. Перетащите `Voiceith.app` из `Applications` в корзину.
+2. При необходимости удалите данные:
+   ```bash
+   rm -rf "$HOME/Library/Application Support/Voiceith"
+   ```
 
 ### Android
 
@@ -177,6 +219,15 @@ chmod +x Voiceith-*.AppImage
 ```bash
 sudo apt install libfuse2
 ```
+
+**macOS: Gatekeeper блокирует запуск**
+Сборка unsigned. Откройте через «Правый клик → Открыть» или выполните:
+
+```bash
+xattr -cr /Applications/Voiceith.app
+```
+
+Если macOS пишет «повреждено», проверьте архитектуру DMG: `x64` для Intel, `arm64` для Apple Silicon.
 
 **Android: APK не устанавливается**
 Разрешите установку из неизвестных источников для файлового менеджера или браузера. Удалите старую debug-версию, если подпись изменилась.
